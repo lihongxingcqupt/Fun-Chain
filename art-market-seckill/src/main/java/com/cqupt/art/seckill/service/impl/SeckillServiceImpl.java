@@ -2,6 +2,9 @@ package com.cqupt.art.seckill.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.cqupt.art.author.dao.NftBatchInfoMapper;
+import com.cqupt.art.author.entity.NftBatchInfoEntity;
+import com.cqupt.art.author.service.NftBatchInfoService;
 import com.cqupt.art.constant.SeckillConstant;
 import com.cqupt.art.constant.SeckillOrderMqConstant;
 import com.cqupt.art.seckill.config.LoginInterceptor;
@@ -28,7 +31,8 @@ public class SeckillServiceImpl implements SeckillService {
     StringRedisTemplate redisTemplate;
     @Autowired
     RabbitTemplate rabbitTemplate;
-
+    @Autowired
+    NftBatchInfoMapper nftBatchInfoMapper;
     @Override
     public void kill(SeckillInfoVo info) throws InterruptedException {
         String token = info.getToken();
@@ -47,9 +51,14 @@ public class SeckillServiceImpl implements SeckillService {
                     Boolean occupy = redisTemplate.opsForValue().setIfAbsent(SeckillConstant.USER_BOUGHT_FLAG + user.getUserId() + "-" + to.getId(), "1", ttl, TimeUnit.MILLISECONDS);
                     if (occupy) {
                         //当前用户没买过
-                        RSemaphore semaphore = redissonClient.getSemaphore(SeckillConstant.SECKILL_SEMAPHORE);
-                        boolean acquire = semaphore.tryAcquire(1, 100, TimeUnit.MILLISECONDS);
-                        if (acquire) {
+//                        RSemaphore semaphore = redissonClient.getSemaphore(SeckillConstant.SECKILL_SEMAPHORE);
+//                        boolean acquire = semaphore.tryAcquire(1, 100, TimeUnit.MILLISECONDS);
+                        /**
+                         * 直接在数据库层面操作库存，数据库层面是有锁的，并且加上库存大于0的条件就不会出现超卖的情况
+                         */
+                        int count = nftBatchInfoMapper.updateKucun();
+
+                        if (count > 0) {
                             //发送创建订单的消息
                             SeckillOrderTo orderTo = new SeckillOrderTo();
                             orderTo.setOrderSn(IdWorker.getIdStr());

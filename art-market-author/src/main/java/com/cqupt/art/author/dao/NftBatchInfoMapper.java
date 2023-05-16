@@ -22,4 +22,6 @@ public interface NftBatchInfoMapper extends BaseMapper<NftBatchInfoEntity> {
     List<SnapUpNftInfoVo> getSnapUpList(@Param("start") int start, @Param("limit") Integer limit);
 
     NftDetailVo getNftDetail(@Param("id") String id);
+
+    int updateKucun();
 }

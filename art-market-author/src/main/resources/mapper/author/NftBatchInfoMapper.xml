@@ -39,5 +39,7 @@
           and nbi.id = #{id}
           and nbi.lanuch_status != 0
     </select>
-
+    <update id="updateKucun">
+        update pm_nft_batch_info set inventory = inventory - 1 where inventory > 0
+    </update>
 </mapper>

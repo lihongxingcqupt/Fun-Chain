@@ -15,19 +15,16 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/api/chain/conflux")
-//@Api(tags = "对外暴露接口")
 public class NftController {
     @Autowired
     private ConfluxNftService confluxNftService;
 
-    //    @ApiOperation("获取发行总量，返回到现在为止总共发行过的nft数量")
     @GetMapping("/totalSupply")
     public R totalSupply() {
         BigInteger totalSupply = confluxNftService.totalSupply();
         return R.ok().put("data", totalSupply);
     }
 
-    //    @Operation(summary = "链上资产转账，将tokenId从from转移到to")
     @GetMapping("/transfer/{from}/{to}/{tokenId}")
     public R transfer(@PathVariable("from")
                               String from,

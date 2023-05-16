@@ -206,8 +206,11 @@ public class NftBatchInfoServiceImpl extends ServiceImpl<NftBatchInfoMapper, Nft
             String redisJson = JSON.toJSONString(to);
             ops.put(key, redisJson);
             //使用信号量设置库存
-            RSemaphore semaphore = redissonClient.getSemaphore(SeckillConstant.SECKILL_SEMAPHORE + token);
-            semaphore.trySetPermits(entity.getInventory());
+//            RSemaphore semaphore = redissonClient.getSemaphore(SeckillConstant.SECKILL_SEMAPHORE + token);
+//            semaphore.trySetPermits(entity.getInventory());
+            /**
+             * 库存直接操作MySQL会更安全，而且就每次减一的操作，性能也不会很差
+             */
             entity.setLanuchStatus(2);
             baseMapper.updateById(entity);
         }
