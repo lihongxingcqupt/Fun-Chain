@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cqupt.art.author.dao.NftBatchInfoMapper">
+    <select id="getSnapUpList" resultType="com.cqupt.art.author.entity.vo.SnapUpNftInfoVo">
+        select nbi.id,
+               nbi.name,
+               nbi.total_supply,
+               nbi.image_url,
+               nbi.price,
+               nbi.inventory,
+               nbi.lanuch_status,
+               a.author_name,
+               a.avatar_url
+        from pm_nft_batch_info as nbi,
+             pm_author as a
+        where nbi.author_id = a.author_id
+          and nbi.is_open = 1
+          and nbi.lanuch_status != 0
+        order by nbi.issue_time desc
+            limit #{start}, #{limit}
+    </select>
+    <select id="getNftDetail" resultType="com.cqupt.art.author.entity.vo.NftDetailVo">
+        select a.author_name,
+               a.avatar_url,
+               a.author_desc,
+               nbi.id,
+               nbi.contract_address,
+               nbi.name,
+               nbi.image_url,
+               nbi.description,
+               nbi.tx_hash,
+               nbi.price,
+               nbi.issue_time as "start_time",
+               nbi.total_supply
+        from pm_nft_batch_info as nbi,
+             pm_author as a
+        where nbi.author_id = a.author_id
+          and nbi.id = #{id}
+          and nbi.lanuch_status != 0
+    </select>
+
+</mapper>

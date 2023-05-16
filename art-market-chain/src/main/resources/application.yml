@@ -1,0 +1,25 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: artmarket-conflux-chain
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.16.62.2:8848
+
+my:
+  chain:
+    net:
+      url: https://test.confluxrpc.com
+
+    contract: cfxtest:acacwaz9gt4jx4cpf4mrbur9usjz2cnp26zgh6d77k
+
+    admin:
+      privateKey: "0xc27da8e4c551cdd0324ee4913bade0bf520d00a6a096298175694dab70550f54"
+      address: "cfxtest:aasu6pa7u3rugb4awcuu937pd52wnc1x2jb4zd916k"
+    chainId: 1
+
+

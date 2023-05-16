@@ -1,0 +1,48 @@
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://10.16.62.2:3306/art?useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
+    dirver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: 10.16.62.2
+    port: 6379
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  rabbitmq:
+    host: 121.40.146.191
+    port: 5672
+    virtual-host: /
+    username: guest
+    password: guest
+
+    template:
+      mandatory: true
+    #手动ack确认收到消息
+    listener:
+      simple:
+        acknowledge-mode: manual
+
+# rabbit mq
+
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 10000
+logging:
+  level:
+    com:
+      cqupt:
+        artdev:
+          dao: debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

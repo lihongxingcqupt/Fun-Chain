@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: art-market-sms
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.16.62.2:3306/art?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  redis:
+    host: 10.16.62.2
+    port: 6379
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.16.62.2:8848
+
+server:
+  port: 8891
+
+tencent:
+  sms:
+    appId: "1400765731"
+    secretID: "AKIDoVYSRHtGVcaP1SwIQM0SeiaDa8UdaJr7"
+    secretKey: "7DD4oLfx3tUqzu51kFYeaNxKajiTzGIz"
+    endPoint: "sms.tencentcloudapi.com"
+    signName: "踩坑指北公众号"
+    templateId: "1606897"
+
+
+logging:
+  level:
+    com:
+      cqupt:
+        artdev:
+          dao: debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

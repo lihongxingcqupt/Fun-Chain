@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<<<<<<< HEAD-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.cqupt.art.market</groupId>
+    <artifactId>art-market</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <modules>
+        <module>art-market-activity</module>
+        <module>art-market-order</module>
+        <module>art-market-seckill</module>
+        <module>art-market-common</module>
+        <module>art-market-chain</module>
+        <module>art-market-notice</module>
+        <module>art-market-trade</module>
+        <module>art-market-user</module>
+        <module>art-market-author</module>
+        <module>art-market-gateway</module>
+        <module>art-market-sms</module>
+    </modules>
+
+    <name>art-market</name>
+    <description>聚合服务</description>
+    <packaging>pom</packaging>
+
+</project>
+        <!--=======-->
+        <!--<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+        <!--         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">-->
+        <!--    <modelVersion>4.0.0</modelVersion>-->
+        <!--    <groupId>com.cqupt.artdev</groupId>-->
+        <!--    <artifactId>artdev</artifactId>-->
+        <!--    <version>0.0.1-SNAPSHOT</version>-->
+        <!--    <name>artdev</name>-->
+        <!--    <description>artdev</description>-->
+        <!--    <properties>-->
+        <!--        <java.version>1.8</java.version>-->
+        <!--    </properties>-->
+        <!--    <modules>-->
+        <!--        <module>artdev-author</module>-->
+        <!--        <module>artdev-gateway</module>-->
+        <!--        <module>artdev-common</module>-->
+        <!--    </modules>-->
+
+        <!--</project>-->
+        <!--&gt;>>>>>> lhx_2-->

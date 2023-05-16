@@ -1,0 +1,48 @@
+server:
+  port: 8889
+spring:
+  application:
+    name: art-user-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.16.62.2:3306/art?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.16.62.2:8848
+  session:
+    store-type: redis
+  rabbitmq:
+    host: 10.16.62.2
+    port: 5672
+    virtual-host: /
+    username: guest
+    password: guest
+    listener:
+      simple:
+        acknowledge-mode: manual
+
+  redis:
+    host: 10.16.62.2
+
+ribbon:
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 0
+  OkToRetryOnAllOperations: false
+  ReadTimeout: 12000
+  ConnectTimeout: 8000
+
+logging:
+  level:
+    com.cqupt.art: debug
+
+mybatis-plus:
+  global-config:
+    db-config:
+      table-prefix: pm_
+  configuration:
+    map-underscore-to-camel-case: true
+
+

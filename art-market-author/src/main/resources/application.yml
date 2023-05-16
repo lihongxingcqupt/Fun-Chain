@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://10.16.62.2:3306/art?useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
+    dirver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: 10.16.62.2
+    port: 6379
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  rabbitmq:
+    host: 10.16.62.2
+    port: 5672
+    virtual-host: /
+    username: guest
+    password: guest
+    #开启发送端确认、确认被mq服务器交换机接收
+    publisher-confirms: true
+    #开启发送端消息抵达队列的确认、确认被路由到队列
+    publisher-returns: true
+    #只要抵达队列，以异步方式优先回调returnConfirm
+    template:
+      mandatory: true
+    #手动ack确认收到消息
+    listener:
+      simple:
+        acknowledge-mode: manual
+
+# rabbit mq
+
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 10000
+logging:
+  level:
+    com:
+      cqupt:
+        artdev:
+          dao: debug
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true

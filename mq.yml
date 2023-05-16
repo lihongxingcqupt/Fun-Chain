@@ -1,0 +1,21 @@
+version: '3.1'
+services:
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=101625
+    restart: always
+    hostname: myrabbit
+    privileged: true #给数据卷赋权限 避免启动出现Permission denied
+    volumes:
+      - /usr/local/rabbitmq/data:/var/lib/rabbitmq #挂载 RabbitMQ数据
+      - /usr/local/rabbitmq/conf:/etc/rabbitmq
+      - /usr/local/rabbitmq/log:/var/log/rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+\
+  docker run -itd --privileged=true --name test_rabbitmq --privileged=true -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest rabbitmq
+  docker run -itd --privileged=true --name test --hostname test --restart unless-stopped --net=host

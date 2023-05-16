@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: artmarket-trade
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.16.62.2:3306/art?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.16.62.2:8848
+
+# 设置超时时间，太短会导致链上服务调用失败
+ribbon:
+  ReadTimeout: 5000
+  ConnectionTimeout: 10000
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+server:
+  port: 9000
