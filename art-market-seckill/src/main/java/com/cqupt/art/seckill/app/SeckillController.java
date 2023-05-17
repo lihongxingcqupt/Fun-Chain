@@ -14,7 +14,8 @@ public class SeckillController {
 
     @GetMapping("/nft")
     public R seckill(@RequestBody SeckillInfoVo info) throws InterruptedException {
-        seckillService.kill(info);
-        return R.ok().put("status", true);
+        // 返回订单号，前端拿到订单号后查询订单进行支付
+        String orderSn = seckillService.kill(info);
+        return R.ok(orderSn);
     }
 }

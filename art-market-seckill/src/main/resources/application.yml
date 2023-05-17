@@ -1,0 +1,47 @@
+server:
+  port: 8099
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.16.62.2:3306/art?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  application:
+    name: art-pay-server
+  redis:
+    host: 10.16.62.2
+    port: 6379
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.16.62.2:8848
+  rabbitmq:
+    host: 10.16.62.2
+    port: 5672
+    virtual-host: /
+    username: guest
+    password: guest
+    #开启发送端确认、确认被mq服务器交换机接收
+    publisher-confirms: true
+    #开启发送端消息抵达队列的确认、确认被路由到队列
+    publisher-returns: true
+    #只要抵达队列，以异步方式优先回调returnConfirm
+    template:
+      mandatory: true
+    #手动ack确认收到消息
+    listener:
+      simple:
+        acknowledge-mode: manual
+
+
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+interfaceAccess:
+  times: 5
+  second: 10
+
+  lockTime: 30

@@ -7,12 +7,14 @@ import com.cqupt.art.author.entity.NftBatchInfoEntity;
 import com.cqupt.art.author.service.NftBatchInfoService;
 import com.cqupt.art.constant.SeckillConstant;
 import com.cqupt.art.constant.SeckillOrderMqConstant;
+import com.cqupt.art.exception.InventoryException;
 import com.cqupt.art.seckill.config.LoginInterceptor;
 import com.cqupt.art.seckill.entity.User;
 import com.cqupt.art.seckill.entity.to.NftDetailRedisTo;
 import com.cqupt.art.seckill.entity.to.SeckillOrderTo;
 import com.cqupt.art.seckill.entity.vo.SeckillInfoVo;
 import com.cqupt.art.seckill.service.SeckillService;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang.StringUtils;
 import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
@@ -34,7 +36,7 @@ public class SeckillServiceImpl implements SeckillService {
     @Autowired
     NftBatchInfoMapper nftBatchInfoMapper;
     @Override
-    public void kill(SeckillInfoVo info) throws InterruptedException {
+    public String kill(SeckillInfoVo info) throws InterruptedException {
         String token = info.getToken();
         BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(SeckillConstant.SECKILL_DETAIL_PREFIX);
         String jsonString = ops.get(info.getName() + "-" + info.getId());
@@ -66,10 +68,14 @@ public class SeckillServiceImpl implements SeckillService {
                             orderTo.setGoodsId(to.getId().toString());
                             orderTo.setPrice(new BigDecimal(to.getPrice()));
                             rabbitTemplate.convertAndSend(SeckillOrderMqConstant.EXCHANGE, SeckillOrderMqConstant.ROUTING_KEY, orderTo);
+                            return orderTo.getOrderSn();
+                        }else{
+                            throw new InventoryException();
                         }
                     }
                 }
             }
         }
+    return null;
     }
 }
