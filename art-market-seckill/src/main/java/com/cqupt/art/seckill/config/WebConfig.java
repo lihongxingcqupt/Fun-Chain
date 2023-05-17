@@ -15,20 +15,4 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/app/**");
     }
-
-    //跨域设置
-    //顺序：servlet的filter->拦截器->mapping，使用自定义拦截器时会导致跨域失败
-    //使用CorsFilter解决
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        log.info("addCorsMappings");
-//        registry.addMapping("/**")
-//                .allowedOrigins("*")
-//                .allowCredentials(true)
-//                .allowedMethods("GET","POST","HEAD","DELETE","OPTIONS")
-//                .maxAge(3600)
-//                .allowedHeaders("*");
-//    }
-
-
 }
