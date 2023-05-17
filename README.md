@@ -7,7 +7,7 @@
 ## 技术栈
 * Java、Spring、消息队列...
 * 数据库：MySQL
-* 缓存：redis
+* 缓存：Redis
 
 ## 微服务功能
 |  服务名  | 功能 |
