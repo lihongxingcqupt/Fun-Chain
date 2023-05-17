@@ -4,14 +4,18 @@
 
 * 一个 NFT 交易平台，实现了藏品的上链、首发、交易等功能。本源码仅限于交流学习，不做商用，凡涉及到法律问题与本人无关。
 
+
+
 ## 技术栈
-* Java、Spring、消息队列...
+<img src="https://img.shields.io/badge/Java-80%25-green" />
+
+* Java、Spring、消息队列...   
 * 数据库：MySQL
 * 缓存：Redis
 
 ## 微服务功能
 |  服务名  | 功能 |
-| :----- | -------: |
+| :----- | :----- |
 | art-market-activity  | 登记抽签服务 |
 | art-market-author   | 作者信息管理 |
 | art-market-chain   | 区块链服务 |
