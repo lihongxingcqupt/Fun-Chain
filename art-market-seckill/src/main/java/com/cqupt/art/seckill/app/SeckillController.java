@@ -1,5 +1,6 @@
 package com.cqupt.art.seckill.app;
 
+import com.cqupt.art.annotation.AccessLimit;
 import com.cqupt.art.seckill.entity.vo.SeckillInfoVo;
 import com.cqupt.art.seckill.service.SeckillService;
 import com.cqupt.art.utils.R;
@@ -11,7 +12,13 @@ public class SeckillController {
     @Autowired
     SeckillService seckillService;
 
-
+    /**
+     * 通过自定义的注解灵活的通过反射来实现接口防刷
+     * @param info
+     * @return
+     * @throws InterruptedException
+     */
+    @AccessLimit(second = 10l,maxTimes = 5l,forbiddenTime = 20l)
     @GetMapping("/nft")
     public R seckill(@RequestBody SeckillInfoVo info) throws InterruptedException {
         // 返回订单号，前端拿到订单号后查询订单进行支付

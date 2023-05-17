@@ -4,8 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.cqupt.art.author.dao.NftBatchInfoMapper;
 import com.cqupt.art.constant.SeckillConstant;
+import com.cqupt.art.constant.SeckillKucunMqConstant;
 import com.cqupt.art.constant.SeckillOrderMqConstant;
 import com.cqupt.art.exception.InventoryException;
+import com.cqupt.art.seckill.config.LoginInterceptor;
 import com.cqupt.art.seckill.entity.User;
 import com.cqupt.art.seckill.entity.to.NftDetailRedisTo;
 import com.cqupt.art.seckill.entity.to.SeckillOrderTo;
@@ -19,6 +21,8 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class SeckillServiceImpl implements SeckillService {
@@ -30,9 +34,9 @@ public class SeckillServiceImpl implements SeckillService {
     RabbitTemplate rabbitTemplate;
     @Autowired
     NftBatchInfoMapper nftBatchInfoMapper;
+
     @Override
-    public String kill(SeckillInfoVo info) throws InterruptedException {
-        String token = info.getToken();
+    public String kill(SeckillInfoVo info){
         BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(SeckillConstant.SECKILL_DETAIL_PREFIX);
         String jsonString = ops.get(info.getName() + "-" + info.getId());
         if (StringUtils.isNotBlank(jsonString)) {
@@ -40,37 +44,49 @@ public class SeckillServiceImpl implements SeckillService {
             //验证时间
             long curTime = System.currentTimeMillis();
             if (curTime >= to.getStartTime().getTime() && curTime < to.getEndTime().getTime()) {
-                if (to.getToken().equals(token)) {
-                    //token对，是在秒杀时间进来的
-                    //验证是否已购买过
-                    User user = LoginInterceptor.threadLocal.get();
-                    long ttl = to.getEndTime().getTime() - System.currentTimeMillis();
-                    Boolean occupy = redisTemplate.opsForValue().setIfAbsent(SeckillConstant.USER_BOUGHT_FLAG + user.getUserId() + "-" + to.getId(), "1", ttl, TimeUnit.MILLISECONDS);
-                    if (occupy) {
-                        //当前用户没买过
-//                        RSemaphore semaphore = redissonClient.getSemaphore(SeckillConstant.SECKILL_SEMAPHORE);
-//                        boolean acquire = semaphore.tryAcquire(1, 100, TimeUnit.MILLISECONDS);
-                        /**
-                         * 直接在数据库层面操作库存，数据库层面是有锁的，并且加上库存大于0的条件就不会出现超卖的情况
-                         */
-                        int count = nftBatchInfoMapper.updateKucun();
 
-                        if (count > 0) {
-                            //发送创建订单的消息
-                            SeckillOrderTo orderTo = new SeckillOrderTo();
-                            orderTo.setOrderSn(IdWorker.getIdStr());
-                            orderTo.setBuyUserId(user.getUserId());
-                            orderTo.setGoodsId(to.getId().toString());
-                            orderTo.setPrice(new BigDecimal(to.getPrice()));
-                            rabbitTemplate.convertAndSend(SeckillOrderMqConstant.EXCHANGE, SeckillOrderMqConstant.ROUTING_KEY, orderTo);
-                            return orderTo.getOrderSn();
-                        }else{
-                            throw new InventoryException();
-                        }
+                //验证是否已购买过
+                User user = LoginInterceptor.threadLocal.get();
+//                long ttl = to.getEndTime().getTime() - System.currentTimeMillis();
+                String isBuy = redisTemplate.opsForValue().get(SeckillConstant.USER_BOUGHT_FLAG + user.getUserId() + "-" + to.getId());
+
+//                Boolean occupy = redisTemplate.opsForValue().setIfAbsent(SeckillConstant.USER_BOUGHT_FLAG + user.getUserId() + "-" + to.getId(), "1", ttl, TimeUnit.MILLISECONDS);
+                if (Objects.isNull(isBuy) || isBuy.length() == 0) {
+                    // redis中没有该用户，说明他没买过，这里支付完成，进行财产转移的时候再将用户ID放入redis
+                    /**
+                     * 直接在数据库层面操作库存，数据库层面是有锁的，并且加上库存大于0的条件就不会出现超卖的情况
+                     */
+                    int count = nftBatchInfoMapper.updateKucun();
+
+                    if (count > 0) {
+                        //发送创建订单的消息
+                        SeckillOrderTo orderTo = new SeckillOrderTo();
+                        orderTo.setOrderSn(IdWorker.getIdStr());
+                        orderTo.setBuyUserId(user.getUserId());
+                        orderTo.setGoodsId(to.getId().toString());
+                        orderTo.setPrice(new BigDecimal(to.getPrice()));
+                        // 发送消息，后台去创建订单
+                        rabbitTemplate.convertAndSend(SeckillOrderMqConstant.EXCHANGE, SeckillOrderMqConstant.ROUTING_KEY, orderTo);
+
+                        // 发送延时消息检查订单是否完成支付，若没有完成则回滚库存
+                        long expirStart = TimeUnit.MINUTES.toMillis(5);
+                        rabbitTemplate.convertAndSend(SeckillKucunMqConstant.EXCHANGE,SeckillKucunMqConstant.ROUTING_KEY,orderTo.getOrderSn(), message -> {
+                            // 这里的失效时间是long类型，普通的TTL方式的类型是String类型
+                            message.getMessageProperties().setHeader("x-delay",expirStart);
+                            return message;
+                        });
+                        return orderTo.getOrderSn();
+                    } else {
+                        throw new InventoryException();
                     }
+
+                }else{
+                    throw new RuntimeException("您已经购买过了");
                 }
+            }else{
+                throw new RuntimeException("不在购买时间");
             }
         }
-    return null;
+        return null;
     }
 }
