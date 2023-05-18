@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 订单表 Mapper 接口
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-22
  */
 @Mapper

@@ -18,7 +18,7 @@ import java.util.Date;
  * 用户表
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-03
  */
 @Data

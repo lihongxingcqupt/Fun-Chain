@@ -9,7 +9,7 @@ import com.cqupt.art.sms.entity.vo.ArticleCatsVo;
  * 文章分类表 服务类
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-07
  */
 public interface PmArticleCatsService extends IService<PmArticleCats> {

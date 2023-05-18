@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * 文章记录表 服务实现类
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-07
  */
 @Service

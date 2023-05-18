@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * 文章分类表 服务实现类
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-07
  */
 @Service

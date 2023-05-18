@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * 文章分类表
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-07
  */
 @Data

@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * 文章记录表 服务类
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-07
  */
 public interface PmArticlesService extends IService<PmArticles> {

@@ -10,7 +10,7 @@ import java.util.List;
  * 服务类
  * </p>
  *
- * @author huangxudong
+ * @author lihongxing
  * @since 2022-11-03
  */
 public interface TransferLogService extends IService<PmTransferLog> {
