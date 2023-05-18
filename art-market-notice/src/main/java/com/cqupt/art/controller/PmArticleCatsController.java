@@ -17,9 +17,6 @@ import java.util.stream.Collectors;
  * <p>
  * 文章分类表 前端控制器
  * </p>
- *
- * @author huangxudong
- * @since 2022-11-07
  */
 @CrossOrigin
 @RestController

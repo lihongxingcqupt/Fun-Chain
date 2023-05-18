@@ -1,15 +1,14 @@
 package com.cqupt.art.enu;
 
-public enum OrderStatusEnum {
+public enum NftStatusEnum {
+    NORMAL(1, "正常"),
+    WAIT_CHAIN_CONFIRM(2, "待链上确认"),
 
-    UNPAID(2, "未支付"),
-    PAID(1, "已支付"),
-
-    FAIL(3,"支付失败");
+    SELLING(3,"寄售中");
     private int code;
     private String message;
 
-    OrderStatusEnum(int code, String message) {
+    NftStatusEnum(int code, String message) {
         this.code = code;
         this.message = message;
     }

@@ -20,9 +20,6 @@ import lombok.experimental.Accessors;
  * <p>
  * 订单表
  * </p>
- *
- * @author huangxudong
- * @since 2022-11-22
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -35,8 +32,8 @@ public class Order implements Serializable {
     /**
      * 主键id
      */
-    @TableId(type = IdType.ID_WORKER)
-    private Integer id;
+    @TableId(type = IdType.ID_WORKER_STR)
+    private String id;
 
     /**
      * 交易单号
@@ -60,7 +57,7 @@ public class Order implements Serializable {
      * 商品ID
      */
     @TableField("goods_id")
-    private Integer goodsId;
+    private String goodsId;
 
     /**
      * 单价
@@ -113,5 +110,6 @@ public class Order implements Serializable {
     @TableField("end_time")
     private Date endTime;
 
+    private Integer localId;
 
 }

@@ -17,9 +17,6 @@ import lombok.experimental.Accessors;
  * <p>
  * 短信发送记录表
  * </p>
- *
- * @author huangxudong
- * @since 2022-11-15
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

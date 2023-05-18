@@ -31,9 +31,15 @@ public class SeckillKucunListener {
     @Autowired
     NftBatchInfoService nftBatchInfoService;
 
+    /**
+     * 延时检查首发场景下的订单是否完成支付，若没有则回滚库存。
+     * @param orderSn
+     * @param message
+     * @param channel
+     */
     @RabbitHandler
     public void createOrder(String orderSn, Message message, Channel channel) {
-        log.info("收到秒杀消息：{}", JSON.toJSONString(orderSn));
+        log.info("收到延时消息：{}", JSON.toJSONString(orderSn));
         long tag = message.getMessageProperties().getDeliveryTag();
         try {
             QueryWrapper<Order> queryWrapper = new QueryWrapper<>();

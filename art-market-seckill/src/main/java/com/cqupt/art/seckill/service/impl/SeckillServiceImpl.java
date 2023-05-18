@@ -47,12 +47,9 @@ public class SeckillServiceImpl implements SeckillService {
 
                 //验证是否已购买过
                 User user = LoginInterceptor.threadLocal.get();
-//                long ttl = to.getEndTime().getTime() - System.currentTimeMillis();
                 String isBuy = redisTemplate.opsForValue().get(SeckillConstant.USER_BOUGHT_FLAG + user.getUserId() + "-" + to.getId());
 
-//                Boolean occupy = redisTemplate.opsForValue().setIfAbsent(SeckillConstant.USER_BOUGHT_FLAG + user.getUserId() + "-" + to.getId(), "1", ttl, TimeUnit.MILLISECONDS);
                 if (Objects.isNull(isBuy) || isBuy.length() == 0) {
-                    // redis中没有该用户，说明他没买过，这里支付完成，进行财产转移的时候再将用户ID放入redis
                     /**
                      * 直接在数据库层面操作库存，数据库层面是有锁的，并且加上库存大于0的条件就不会出现超卖的情况
                      */

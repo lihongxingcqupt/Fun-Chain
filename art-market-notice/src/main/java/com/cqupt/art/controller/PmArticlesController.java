@@ -16,9 +16,6 @@ import java.util.List;
  * <p>
  * 文章记录表 前端控制器
  * </p>
- *
- * @author huangxudong
- * @since 2022-11-07
  */
 @RestController
 @RequestMapping("/api/pm-articles")

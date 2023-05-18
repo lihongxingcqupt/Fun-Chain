@@ -3,6 +3,7 @@ package com.cqupt.art.order.service;
 import com.cqupt.art.order.entity.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cqupt.art.order.entity.to.SeckillOrderTo;
+import com.cqupt.art.order.entity.vo.AlipayAsyncVo;
 import com.cqupt.art.order.entity.vo.PayVo;
 import org.springframework.stereotype.Service;
 
@@ -20,4 +21,6 @@ public interface OrderService extends IService<Order> {
     void createSeckillOrder(SeckillOrderTo orderTo);
 
     PayVo getOrderPay(String orderSn);
+
+    boolean handlerPayResult(AlipayAsyncVo alipayAsyncVo);
 }

@@ -22,6 +22,12 @@ public class SeckillOrderListener {
     @Autowired
     OrderService orderService;
 
+    /**
+     * 首发中直接发送一条消息到这里进行订单的持久化
+     * @param orderTo
+     * @param message
+     * @param channel
+     */
     @RabbitHandler
     public void createOrder(SeckillOrderTo orderTo, Message message, Channel channel) {
         log.info("收到秒杀消息：{}", JSON.toJSONString(orderTo));

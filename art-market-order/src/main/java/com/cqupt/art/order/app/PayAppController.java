@@ -23,8 +23,16 @@ public class PayAppController {
     @Autowired
     private AlipayTemplate alipayTemplate;
 
+    /**
+     * 通过订单号进行支付
+     * @param orderSn
+     * @return
+     */
     @GetMapping("/payOrder/{orderSn}")
     public R payOrder(@PathVariable("orderSn") String orderSn) {
+        /**
+         * 支付 VO 封装了支付的基本信息
+         */
         PayVo payVo = orderService.getOrderPay(orderSn);
         try {
             String pay = alipayTemplate.pay(payVo);
