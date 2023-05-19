@@ -7,11 +7,17 @@
 
 
 ## 技术栈
-<img src="https://img.shields.io/badge/Java-80%25-green" />
+<img src="https://img.shields.io/badge/Java-100%25-green" /> 
 
-* Java、Spring、消息队列...   
-* 数据库：MySQL
-* 缓存：Redis
+<img src="https://img.shields.io/badge/Spring%20Boot-100%25-yellow" />
+
+<img src="https://img.shields.io/badge/%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6-Rabbit%20MQ-red" />
+
+<img src="https://img.shields.io/badge/%E6%95%B0%E6%8D%AE%E5%BA%93-MySQL-blue" />
+
+<img src="https://img.shields.io/badge/%E7%BC%93%E5%AD%98-Redis-lightgrey" />
+
+
 
 ## 微服务功能
 |  服务名  | 功能 |
