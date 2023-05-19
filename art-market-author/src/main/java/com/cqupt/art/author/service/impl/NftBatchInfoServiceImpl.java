@@ -35,6 +35,8 @@ import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 @Service("nftBatchInfoService")
+@CacheConfig(cacheNames = "nftInfo")
 @Slf4j
 public class NftBatchInfoServiceImpl extends ServiceImpl<NftBatchInfoMapper, NftBatchInfoEntity> implements NftBatchInfoService {
     @Autowired
@@ -141,7 +144,7 @@ public class NftBatchInfoServiceImpl extends ServiceImpl<NftBatchInfoMapper, Nft
         nftInfoService.update(up);
     }
 
-
+    @CacheEvict("nftList")
     @Override
     public void deleteBatch(Long id) {
         this.baseMapper.deleteById(id);
@@ -184,6 +187,7 @@ public class NftBatchInfoServiceImpl extends ServiceImpl<NftBatchInfoMapper, Nft
     }
 
     @Override
+    @CacheEvict("nftList")
     public void launch(Long workId) {
         NftBatchInfoEntity entity = baseMapper.selectById(workId);
         BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps(SeckillConstant.SECKILL_DETAIL_PREFIX);

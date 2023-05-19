@@ -14,6 +14,9 @@ import com.cqupt.art.author.feign.UserFeignService;
 import com.cqupt.art.author.service.NftInfoService;
 import com.cqupt.art.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service("nftInfoService")
+@CacheConfig(cacheNames = "nftInfo")
 public class NftInfoServiceImpl extends ServiceImpl<NftInfoDao, NftInfoEntity> implements NftInfoService {
 
     @Autowired
@@ -30,6 +34,7 @@ public class NftInfoServiceImpl extends ServiceImpl<NftInfoDao, NftInfoEntity> i
     TradeFeignService tradeFeignService;
 
     @Override
+    @Cacheable(key = "#id")
     public List<NftAndUserVo> queryPage(Map<String, Object> params) {
         QueryWrapper<NftInfoEntity> queryWrapper = new QueryWrapper<>();
         String artName = (String) params.get("artName");
@@ -92,5 +97,12 @@ public class NftInfoServiceImpl extends ServiceImpl<NftInfoDao, NftInfoEntity> i
         List<TransferLogTo> data = r.getData("data", new TypeReference<List<TransferLogTo>>() {
         });
         return data;
+    }
+
+    @Override
+    @CachePut("nftList")
+    public List<NftInfoEntity> getAllNft() {
+        List<NftInfoEntity> list = this.list();
+        return list;
     }
 }

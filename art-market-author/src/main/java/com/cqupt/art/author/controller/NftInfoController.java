@@ -1,14 +1,12 @@
 package com.cqupt.art.author.controller;
 
+import com.cqupt.art.author.entity.NftInfoEntity;
 import com.cqupt.art.author.entity.to.TransferLogTo;
 import com.cqupt.art.author.entity.vo.NftAndUserVo;
 import com.cqupt.art.author.service.NftInfoService;
 import com.cqupt.art.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -55,6 +53,15 @@ public class NftInfoController {
         List<TransferLogTo> transferLogTos = nftInfoService.getTransforLog(id);
         return R.ok().put("data", transferLogTos);
     }
-
-
+    /**
+     * 查询全部的NFT
+     * @Author lihongxing
+     * @return
+     * @param
+     */
+    @GetMapping("/nftList")
+    public R getAllNFT(){
+        List<NftInfoEntity> nfts = nftInfoService.getAllNft();
+        return R.ok().put("data",nfts);
+    }
 }

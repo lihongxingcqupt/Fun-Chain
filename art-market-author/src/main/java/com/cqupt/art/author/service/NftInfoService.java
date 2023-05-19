@@ -14,4 +14,6 @@ public interface NftInfoService extends IService<NftInfoEntity> {
     List<NftAndUserVo> queryPage(Map<String, Object> params);
 
     List<TransferLogTo> getTransforLog(Long id);
+
+    List<NftInfoEntity> getAllNft();
 }
