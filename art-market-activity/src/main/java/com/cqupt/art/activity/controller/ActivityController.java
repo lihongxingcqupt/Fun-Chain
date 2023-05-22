@@ -59,4 +59,8 @@ public class ActivityController {
         return R.ok();
     }
 
+    @GetMapping("/zhongqianGoumai")
+    public R zhongqianGoumai(@RequestParam("userId") Long userId,@RequestParam("activityId") String activityId){
+        return null;
+    }
 }

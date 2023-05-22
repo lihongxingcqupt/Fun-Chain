@@ -55,7 +55,6 @@ public class ChouqianListener {
         for (Object id : ids) {
             System.out.println((String) id);
         }
-        //todo 将活动的ID和中奖用户ID 存入数据库
         List<Object> list = new ArrayList<>(ids);
         //将顺序随机打乱后，选取前num个人即时中签的人
         Collections.shuffle(list);
