@@ -14,4 +14,6 @@ public interface ActivityService extends IService<ActivityEntity> {
     ActivityVo shangjia(Long nftId);
 
     boolean dengji(DengjiVo dengjiVo);
+
+    boolean buy(Long userId, String activityId);
 }

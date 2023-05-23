@@ -61,6 +61,11 @@ public class ActivityController {
 
     @GetMapping("/zhongqianGoumai")
     public R zhongqianGoumai(@RequestParam("userId") Long userId,@RequestParam("activityId") String activityId){
-        return null;
+        boolean flag = activityService.buy(userId,activityId);
+        if(flag){
+            return R.ok();
+        }else{
+            return R.error("用户未中签或已经购买过了");
+        }
     }
 }
