@@ -47,6 +47,7 @@ public class TransforController {
         if (txHash != null) {
             return R.ok().put("data", txHash);
         }
+
         return R.error("空投失败！");
     }
 
