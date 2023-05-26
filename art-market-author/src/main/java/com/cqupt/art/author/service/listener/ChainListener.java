@@ -14,6 +14,9 @@ import com.cqupt.art.author.feign.ChainFeignService;
 import com.cqupt.art.author.service.AuthorService;
 import com.cqupt.art.author.service.NftBatchInfoService;
 import com.cqupt.art.author.service.NftInfoService;
+import com.cqupt.art.constant.EmailConstant;
+import com.cqupt.art.constant.RabbitMqConstant;
+import com.cqupt.art.enu.NftBatchStatusEnum;
 import com.cqupt.art.utils.R;
 import com.rabbitmq.client.Channel;
 import lombok.SneakyThrows;
@@ -23,14 +26,20 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.cqupt.art.utils.SendEmailUtil.send_qqmail;
 
 @Service
 @RabbitListener(queues = MyNftMqConfig.QUEUE_MINT_PRODUCT)
@@ -45,6 +54,10 @@ public class ChainListener {
 
     @Autowired
     NftInfoService nftInfoService;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
+
 
     @SneakyThrows
     @RabbitHandler
@@ -94,6 +107,26 @@ public class ChainListener {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } else {
             log.info("上链异常，拒绝消费消息......重试");
+            if(redisTemplate.opsForValue().get(message.getMessageProperties().getMessageId()) == null){
+                redisTemplate.opsForValue().set(message.getMessageProperties().getMessageId(),"1");
+            }else{
+                int times = Integer.parseInt(redisTemplate.opsForValue().get(message.getMessageProperties().getMessageId()));
+                if(times > RabbitMqConstant.retryTimes){
+                    // 尝试多次仍然未上链成功说明不是网络波动而是其他致命的原因了，这种情况，手动ACK并邮件通知工作人员，并且设置上链状态为出错
+                    batchInfoEntity.setLanuchStatus(NftBatchStatusEnum.UP_ERROR.getCode());
+                    batchInfoService.updateById(batchInfoEntity);
+
+                    channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                    // 邮件通知
+                    boolean flag = send_qqmail(Arrays.asList(EmailConstant.administratorEmail), "上链重试次数过多", "上链已重复超过"+RabbitMqConstant.retryTimes + "请检查");
+                    if(flag){
+                        log.info("上链异常，已通知管理员");
+                    }
+                }else{
+                    // 次数加一
+                    redisTemplate.opsForValue().set(message.getMessageProperties().getMessageId(),times + 1 + "");
+                }
+            }
             channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
         }
     }

@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-//TODO 支付逻辑，包括支付完成将用户添加到redis中
 @RabbitListener(queues = SeckillKucunMqConstant.QUEUE)
 @Service
 @Slf4j
