@@ -33,3 +33,29 @@
 | art-market-trade   | 交易服务 |
 | art-market-user   | 用户服务 |
 
+## 特色功能
+1、mq尝试次数过多后为不影响整体性能，不让mq再做无谓的重试，选择使用ACK并邮件通知管理员。
+```
+log.info("上链异常，拒绝消费消息......重试");
+            if(redisTemplate.opsForValue().get(message.getMessageProperties().getMessageId()) == null){
+                redisTemplate.opsForValue().set(message.getMessageProperties().getMessageId(),"1");
+            }else{
+                int times = Integer.parseInt(redisTemplate.opsForValue().get(message.getMessageProperties().getMessageId()));
+                if(times > RabbitMqConstant.retryTimes){
+                    // 尝试多次仍然未上链成功说明不是网络波动而是其他致命的原因了，这种情况，手动ACK并邮件通知工作人员，并且设置上链状态为出错
+                    batchInfoEntity.setLanuchStatus(NftBatchStatusEnum.UP_ERROR.getCode());
+                    batchInfoService.updateById(batchInfoEntity);
+
+                    channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                    // 邮件通知
+                    boolean flag = send_qqmail(Arrays.asList(EmailConstant.administratorEmail), "上链重试次数过多", "上链已重复超过"+RabbitMqConstant.retryTimes + "请检查");
+                    if(flag){
+                        log.info("上链异常，已通知管理员");
+                    }
+                }else{
+                    // 次数加一
+                    redisTemplate.opsForValue().set(message.getMessageProperties().getMessageId(),times + 1 + "");
+                }
+            }
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+```
