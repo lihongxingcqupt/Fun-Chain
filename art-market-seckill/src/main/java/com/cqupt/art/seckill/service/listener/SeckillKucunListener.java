@@ -39,6 +39,7 @@ public class SeckillKucunListener {
     @RabbitHandler
     public void createOrder(String orderSn, Message message, Channel channel) {
         log.info("收到延时消息：{}", JSON.toJSONString(orderSn));
+
         long tag = message.getMessageProperties().getDeliveryTag();
         try {
             QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
