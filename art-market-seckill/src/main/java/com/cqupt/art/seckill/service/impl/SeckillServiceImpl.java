@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.cqupt.art.author.dao.NftBatchInfoMapper;
 import com.cqupt.art.constant.SeckillConstant;
 import com.cqupt.art.constant.SeckillKucunMqConstant;
-import com.cqupt.art.constant.SeckillOrderMqConstant;
 import com.cqupt.art.exception.InventoryException;
+import com.cqupt.art.order.entity.Order;
+import com.cqupt.art.order.service.OrderService;
 import com.cqupt.art.seckill.config.LoginInterceptor;
 import com.cqupt.art.seckill.entity.User;
 import com.cqupt.art.seckill.entity.to.NftDetailRedisTo;
@@ -16,6 +17,7 @@ import com.cqupt.art.seckill.service.SeckillService;
 import org.apache.commons.lang.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -34,7 +36,8 @@ public class SeckillServiceImpl implements SeckillService {
     RabbitTemplate rabbitTemplate;
     @Autowired
     NftBatchInfoMapper nftBatchInfoMapper;
-
+    @Autowired
+    OrderService orderService;
     @Override
     public String kill(SeckillInfoVo info){
         BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(SeckillConstant.SECKILL_DETAIL_PREFIX);
@@ -62,9 +65,9 @@ public class SeckillServiceImpl implements SeckillService {
                         orderTo.setBuyUserId(user.getUserId());
                         orderTo.setGoodsId(to.getId().toString());
                         orderTo.setPrice(new BigDecimal(to.getPrice()));
-                        // 发送消息，后台去创建订单
-                        rabbitTemplate.convertAndSend(SeckillOrderMqConstant.EXCHANGE, SeckillOrderMqConstant.ROUTING_KEY, orderTo);
-
+                        // 发送消息，后台去创建订单，这样存在不安全的地方，订单应该同步创建
+//                        rabbitTemplate.convertAndSend(SeckillOrderMqConstant.EXCHANGE, SeckillOrderMqConstant.ROUTING_KEY, orderTo);
+                        createSeckillOrder(orderTo);
                         // 发送延时消息检查订单是否完成支付，若没有完成则回滚库存
                         long expirStart = TimeUnit.MINUTES.toMillis(5);
                         rabbitTemplate.convertAndSend(SeckillKucunMqConstant.EXCHANGE,SeckillKucunMqConstant.ROUTING_KEY,orderTo.getOrderSn(), message -> {
@@ -85,5 +88,20 @@ public class SeckillServiceImpl implements SeckillService {
             }
         }
         return null;
+    }
+
+    public void createSeckillOrder(SeckillOrderTo orderTo){
+        Order order = new Order();
+        BeanUtils.copyProperties(orderTo, order);
+
+        //卖方id为0为首发订单
+        order.setSellUserId("0");
+        order.setNum(1);
+        //每次只能买一个
+        order.setSumPrice(orderTo.getPrice());
+        //不发优惠卷
+        order.setPayMoney(orderTo.getPrice());
+        order.setStatus(1);
+        orderService.save(order);
     }
 }
